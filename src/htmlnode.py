@@ -34,7 +34,7 @@ class LeafNode(HTMLNode):
     
     def to_html(self):
         if self.value == None:
-            raise ValueError
+            raise ValueError("no value was found") from None
         if self.tag == None:
             return self.value
         if self.props == None:
@@ -44,3 +44,28 @@ class LeafNode(HTMLNode):
     
     def __repr__(self):
         return (f"tag={self.tag}, value={self.value}, props={self.props}")
+
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        super(ParentNode, self).__init__(tag, None, children, props)
+    
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("no tag was found") from None
+        if self.children == None:
+            raise ValueError("the parent node has no children, relatable") from None
+        children_tag = []
+        for child in self.children:
+            if self.value == None:
+                raise ValueError("no value was found") from None
+            if self.tag == None:
+                children_tag.append(self.value)
+            if self.props == None:
+                children_tag.append(f"<{self.tag}>{self.value}</{self.tag}>")
+            else:
+                children_tag.append(f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>')
+        
+        nice_string = f"{self.tag}"
+        for string in children_tag:
+            nice_string += string
+        return nice_string + f"/{self.tag}"

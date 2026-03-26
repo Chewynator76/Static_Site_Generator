@@ -8,36 +8,29 @@ class HTMLNode():
         self.props = props
     
     def to_html(self):
-        raise NotImplementedError
+        raise NotImplementedError("a base HTML node can't become HTML")
     
     def props_to_html(self):
-        if self.props == None or len(self.props) == 0:
+        if self.props is None:
             return ""
-        if "href" not in self.props and "target" not in self.props:
-            return ""
-        if "href" not in self.props:
-            return f' target="{self.props['target']}"'
-        if "target" not in self.props:
-            return f' href="{self.props["href"]}"'
-        return f' href="{self.props["href"]}" target="{self.props["target"]}"'
+        return_string = ""
+        for key in self.props:
+            return_string += f' {key}="{self.props[key]}"'
+        return return_string
     
     def __repr__(self):
-        if self.children == None:
-            children_thing = ""
-        else:
-            children_thing = str(self.children)
-        return (f"tag={self.tag}, value={self.value}, children={children_thing}, props={self.props}")
+        return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
     
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
         super(LeafNode, self).__init__(tag, value, None, props)
     
     def to_html(self):
-        if self.value == None:
-            raise ValueError("no value was found") from None
-        if self.tag == None:
+        if self.value is None:
+            raise ValueError("no value was found")
+        if self.tag is None:
             return self.value
-        if self.props == None:
+        if self.props is None:
             return f"<{self.tag}>{self.value}</{self.tag}>"
         else:
             return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
@@ -50,20 +43,14 @@ class ParentNode(HTMLNode):
         super(ParentNode, self).__init__(tag, None, children, props)
     
     def to_html(self):
-        if self.tag == None:
-            raise ValueError("no tag was found") from None
-        if self.children == None:
-            raise ValueError("the parent node has no children, relatable") from None
-        children_tag = []
+        if self.tag is None:
+            raise ValueError("no tag was found")
+        if self.children is None:
+            raise ValueError("the parent node has no children, relatable")
+        children_html = ""
         for child in self.children:
-            if self.value == None:
-                raise ValueError("no value was found") from None
-            if self.tag == None:
-                children_tag.append(self.value)
-            if self.props == None:
-                children_tag.append(f"<{self.tag}>{self.value}</{self.tag}>")
-            else:
-                children_tag.append(f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>')
+            children_html += child.to_html()
+        return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
         
         nice_string = f"{self.tag}"
         for string in children_tag:

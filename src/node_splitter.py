@@ -99,6 +99,15 @@ def text_to_textnodes(text):
     original_text = split_nodes_image(original_text)
     original_text = split_nodes_link(original_text)
     return original_text
+
+def markdown_to_blocks(markdown):
+    markdown = markdown.strip()
+    blocks = markdown.split("\n\n")
+    for i in range(len(blocks)):
+        if blocks[i] == "":
+            blocks.pop[i]
+    return blocks
+
     
 
     

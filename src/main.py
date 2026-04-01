@@ -1,9 +1,6 @@
-from textnode import TextNode
-from textnode import TextType
+from directory_functions import copydir_to_targetdir
 
 def main():
-    text_type_text = TextType.LINK
-    test = TextNode("This is some anchor text", text_type_text, "https://www.boot.dev")
-    print(test)
+    copydir_to_targetdir("./static", "./public")
 
 main()

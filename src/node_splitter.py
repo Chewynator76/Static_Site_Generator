@@ -199,3 +199,21 @@ def quote_to_html_node(block):
     content = " ".join(new_lines)
     children = text_to_children(content)
     return ParentNode("blockquote", children)
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    title = None
+    for block in blocks:
+        temp = block_to_block_type(block)
+        if temp == BlockType.HEADING:
+            count = 0
+            for char in block:
+                if char == "#":
+                    count += 1
+                else:
+                    break
+            if count == 1:
+                title = block
+    if title == None:
+        raise Exception("No title was found")
+    return title.lstrip("#").strip()

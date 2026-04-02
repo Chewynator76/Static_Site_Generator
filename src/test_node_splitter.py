@@ -2,7 +2,7 @@ import unittest
 
 from blocktype import BlockType, block_to_block_type
 from textnode import TextNode, TextType
-from node_splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, markdown_to_html_node
+from node_splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, markdown_to_html_node, extract_title
 
 class TestInlineMarkdown(unittest.TestCase):
     def test_delim_bold(self):
@@ -306,6 +306,32 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+    
+    def test_extract_title(self):
+        md = """
+        # This is the title
+
+        blah blah blah
+        random text
+        whatever
+
+        """
+        title = extract_title(md)
+        self.assertEqual(title, "This is the title")
+    
+    def test_extract_title_with_multible_headings(self):
+        md = """
+        ### This is not the title
+
+        ###### Nor is this
+
+        # However this is the title
+
+        ## Fakeout go brrr
+
+        """
+        title = extract_title(md)
+        self.assertEqual(title, "However this is the title")
 
 
 if __name__ == "__main__":

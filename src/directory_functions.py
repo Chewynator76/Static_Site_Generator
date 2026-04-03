@@ -6,13 +6,14 @@ from htmlnode import HTMLNode, LeafNode, ParentNode
 def copydir_to_targetdir(source, target):
     target_path = os.path.abspath(target)
     source_path = os.path.abspath(source)
-    target_contents = os.listdir(target_path)
-    source_contents = os.listdir(source_path)
 
     if os.path.exists(source_path) == False:
         return
     if os.path.exists(target_path) == False:
         os.mkdir(target_path)
+
+    target_contents = os.listdir(target_path)
+    source_contents = os.listdir(source_path)
 
     for path in target_contents:
         temp = os.path.join(target_path, path)

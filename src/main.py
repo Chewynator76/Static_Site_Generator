@@ -1,7 +1,12 @@
+import sys
 from directory_functions import copydir_to_targetdir, generate_page, generate_pages_recursive
 
 def main():
-    copydir_to_targetdir("static", "public")
-    generate_pages_recursive("content", "template.html", "public")
+    try:
+        basepath = sys.argv[1]
+    except:
+        basepath = "/"
+    copydir_to_targetdir("static", "docs")
+    generate_pages_recursive("content", "template.html", "docs", basepath)
 
 main()

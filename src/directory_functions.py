@@ -30,7 +30,7 @@ def copydir_to_targetdir(source, target):
         os.mkdir(temp2)
         copydir_to_targetdir(temp, temp2)
     
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath="/"):
     print(f"Generating page {from_path} to {dest_path} using {template_path}...")
 
     abs_from_path = os.path.abspath(from_path)
@@ -56,7 +56,7 @@ def generate_page(from_path, template_path, dest_path):
     html_str = markdown_to_html_node(markdown).to_html()
     title = extract_title(markdown)
 
-    template = template.replace("{{ Title }}", title).replace("{{ Content }}", html_str)
+    template = template.replace("{{ Title }}", title).replace("{{ Content }}", html_str).replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
 
     dest_file.write(template)
     markdown_file.close()
@@ -64,7 +64,7 @@ def generate_page(from_path, template_path, dest_path):
     dest_file.close()
     print("Successfully generated page")
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath="/"):
     abs_from_path = os.path.abspath(dir_path_content)
     abs_template_path = os.path.abspath(template_path)
     abs_dest_path = os.path.abspath(dest_dir_path)
@@ -77,9 +77,9 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         if os.path.isdir(file_path):
             joined = os.path.join(dir_path_content, file)
             joined_dest = os.path.join(dest_dir_path, file)
-            generate_pages_recursive(joined, template_path, joined_dest)
+            generate_pages_recursive(joined, template_path, joined_dest, basepath)
         elif file_extension == ".md":
             new_file = file_name + ".html"
             new_dest_path = os.path.join(dest_dir_path, new_file)
-            generate_page(file_path, template_path, new_dest_path)
+            generate_page(file_path, template_path, new_dest_path, basepath)
             

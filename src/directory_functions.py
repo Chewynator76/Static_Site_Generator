@@ -63,3 +63,23 @@ def generate_page(from_path, template_path, dest_path):
     template_file.close()
     dest_file.close()
     print("Successfully generated page")
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    abs_from_path = os.path.abspath(dir_path_content)
+    abs_template_path = os.path.abspath(template_path)
+    abs_dest_path = os.path.abspath(dest_dir_path)
+
+    markdown_list = os.listdir(abs_from_path)
+
+    for file in markdown_list:
+        file_name, file_extension = os.path.splitext(file)
+        file_path = os.path.join(abs_from_path, file)
+        if os.path.isdir(file_path):
+            joined = os.path.join(dir_path_content, file)
+            joined_dest = os.path.join(dest_dir_path, file)
+            generate_pages_recursive(joined, template_path, joined_dest)
+        elif file_extension == ".md":
+            new_file = file_name + ".html"
+            new_dest_path = os.path.join(dest_dir_path, new_file)
+            generate_page(file_path, template_path, new_dest_path)
+            
